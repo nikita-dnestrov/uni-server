@@ -1,0 +1,118 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  phoneNumber String
+  password    String
+  address     Address?
+  orders      Order[]
+  Cart        Cart?
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+}
+
+model Product {
+  id          String         @id @default(uuid())
+  name        String
+  brand       String
+  description String
+  isArchived  Boolean        @default(false)
+  material    String?
+  gender      String
+  category    String
+  colors      ProductColor[]
+  OrderDetail OrderDetail[]
+  CartDetail  CartDetail[]
+}
+
+model ProductColor {
+  id          String         @id @default(uuid())
+  color       String
+  productId   String
+  product     Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  images      ProductImage[]
+  sizes       ProductSize[]
+  CartDetail  CartDetail[]
+  OrderDetail OrderDetail[]
+}
+
+model ProductSize {
+  id          String        @id @default(uuid())
+  size        Float
+  stock       Int
+  price       Float
+  colorId     String
+  color       ProductColor  @relation(fields: [colorId], references: [id], onDelete: Cascade)
+  CartDetail  CartDetail[]
+  OrderDetail OrderDetail[]
+}
+
+model ProductImage {
+  id      String       @id @default(uuid())
+  url     String
+  colorId String
+  color   ProductColor @relation(fields: [colorId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id           String        @id @default(uuid())
+  date         DateTime      @default(now())
+  status       Int
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  orderDetails OrderDetail[]
+}
+
+model OrderDetail {
+  id        String       @id @default(uuid())
+  amount    Int
+  productId String
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  colorId   String
+  color     ProductColor @relation(fields: [colorId], references: [id], onDelete: Cascade)
+  sizeId    String
+  size      ProductSize  @relation(fields: [sizeId], references: [id], onDelete: Cascade)
+  orderId   String
+  order     Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Address {
+  id     String @id @default(uuid())
+  city   String
+  street String
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Cart {
+  id          String       @id @default(uuid())
+  userId      String       @unique
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cartDetails CartDetail[]
+}
+
+model CartDetail {
+  id        String       @id @default(uuid())
+  productId String
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  colorId   String
+  color     ProductColor @relation(fields: [colorId], references: [id], onDelete: Cascade)
+  sizeId    String
+  size      ProductSize  @relation(fields: [sizeId], references: [id], onDelete: Cascade)
+  quantity  Int
+  cartId    String
+  cart      Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade)
+}
