@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { OrderController } from "../controllers/order";
-import { authenticateJWT } from "../middlewares/auth";
+import { authenticateJWT, authenticateUser } from "../middlewares/auth";
 
 export const OrderRoutes = async (fastify: FastifyInstance) => {
   fastify.get("/:id", { preHandler: [authenticateJWT] }, OrderController.getOrderById);
@@ -9,7 +9,7 @@ export const OrderRoutes = async (fastify: FastifyInstance) => {
 
   fastify.get("/user/:userId", { preHandler: [authenticateJWT] }, OrderController.getOrdersByUserId);
 
-  fastify.post("/", { preHandler: [authenticateJWT] }, OrderController.createOrder);
+  fastify.post("/", { preHandler: [authenticateUser] }, OrderController.createOrder);
 
   fastify.put("/:id", { preHandler: [authenticateJWT] }, OrderController.updateOrder);
 

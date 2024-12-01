@@ -12,15 +12,25 @@ export const AuthController = {
     const { email, password } = request.body as any;
     const user = await AuthService.login(email, password);
 
-    const token = await reply.jwtSign({ id: user.id, email: user.email });
-    reply.send({ token });
+    const token = await reply.jwtSign({
+      id: user.id,
+      email: user.email,
+      role: "user",
+    });
+
+    reply.send({ token, userId: user.id });
   },
 
   async loginAdmin(request: FastifyRequest, reply: FastifyReply) {
     const { email, password } = request.body as any;
     const user = await AuthService.loginAdmin(email, password);
 
-    const token = await reply.jwtSign({ id: user.id, email: user.email });
+    const token = await reply.jwtSign({
+      id: user.id,
+      email: user.email,
+      role: "admin",
+    });
+
     reply.send({ adminToken: token, adminId: user.id });
   },
 };
