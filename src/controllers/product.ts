@@ -71,6 +71,24 @@ export const ProductController = {
     reply.send(product);
   },
 
+  async updateColor(req: FastifyRequest, reply: FastifyReply) {
+    const { id } = req.params as any;
+    const color = await ProductService.updateColor(id, req.body);
+    reply.send(color);
+  },
+
+  async updateSize(req: FastifyRequest, reply: FastifyReply) {
+    const { id } = req.params as any;
+    const size = await ProductService.updateSize(id, req.body);
+    reply.send(size);
+  },
+
+  async getColor(req: FastifyRequest, reply: FastifyReply) {
+    const { id } = req.params as any;
+    const size = await ProductService.getColor(id);
+    reply.send(size);
+  },
+
   async deleteProduct(req: FastifyRequest, reply: FastifyReply) {
     const { id } = req.params as any;
     await ProductService.deleteProduct(id);

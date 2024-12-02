@@ -105,7 +105,7 @@ export const ProductService = {
   },
 
   async updateProduct(id: string, data: any) {
-    const { name, description, isArchived, brand, category, colors } = data;
+    const { name, description, isArchived, brand, category } = data;
 
     return prisma.product.update({
       where: { id },
@@ -115,17 +115,6 @@ export const ProductService = {
         isArchived,
         brand,
         category,
-        colors: {
-          create: colors.map((color: any) => ({
-            color: color.color,
-            sizes: {
-              create: color.sizes,
-            },
-            images: {
-              create: color.images.map((url: string) => ({ url })),
-            },
-          })),
-        },
       },
     });
   },
@@ -152,5 +141,62 @@ export const ProductService = {
     );
 
     return imageUrls;
+  },
+
+  async updateColor(id: string, data: any) {
+    const checkColor = await prisma.productColor.findUnique({ where: { id } });
+
+    if (checkColor) {
+      const { color } = data;
+      return await prisma.productColor.update({
+        where: { id },
+        data: {
+          color,
+        },
+      });
+    } else {
+      const { color, productId } = data;
+      return await prisma.productColor.create({
+        data: {
+          color,
+          productId,
+          images: {
+            create: color.images.map((url: string) => ({ url })),
+          },
+        },
+      });
+    }
+  },
+
+  async updateSize(id: string, data: any) {
+    const checkSize = await prisma.productSize.findUnique({
+      where: { id },
+    });
+
+    if (checkSize) {
+      const { stock, size, price } = data;
+      return await prisma.productSize.update({
+        where: { id },
+        data: {
+          stock,
+          size,
+          price,
+        },
+      });
+    } else {
+      const { stock, size, price, colorId } = data;
+      return await prisma.productSize.create({
+        data: {
+          stock,
+          size,
+          price,
+          colorId,
+        },
+      });
+    }
+  },
+
+  async getColor(id: string) {
+    return await prisma.productColor.findUnique({ where: { id } });
   },
 };

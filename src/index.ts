@@ -7,7 +7,9 @@ import { GlobalRouter } from "./routes";
 
 const fastify = Fastify({ logger: true });
 
-fastify.register(cors);
+fastify.register(cors, {
+  origin: "*",
+});
 fastify.register(require("@fastify/multipart"));
 fastify.register(jwt, { secret: "your-secret-key" });
 

@@ -16,6 +16,9 @@ export const ProductRoutes = async (fastify: FastifyInstance) => {
     { preHandler: [authenticateJWT, multerMiddleware.array("images")] },
     ProductController.createProdcutColor
   );
-  fastify.put("/:id", { preHandler: [authenticateJWT] }, ProductController.updateProduct);
   fastify.delete("/:id", { preHandler: [authenticateJWT] }, ProductController.deleteProduct);
+  fastify.put("/:id", { preHandler: [authenticateJWT] }, ProductController.updateProduct);
+  fastify.put("/color/:id", { preHandler: [authenticateJWT] }, ProductController.updateColor);
+  fastify.put("/size/:id", { preHandler: [authenticateJWT] }, ProductController.updateSize);
+  fastify.get("/color/:id", { preHandler: [authenticateJWT] }, ProductController.getColor);
 };
